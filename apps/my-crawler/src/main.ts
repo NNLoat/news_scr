@@ -1,17 +1,19 @@
 // Let's scrape something...
-import { CheerioCrawler, Dataset, log } from 'crawlee';
-import { TheStandardCrawler } from './crawlers/TheStandardCrawler.js';
-import { ThaipbsCrawler } from './crawlers/ThaiPBSCrawler.js';
+// import { CheerioCrawler, Dataset, log } from 'crawlee';
+// import { TheStandardCrawler } from './crawlers/TheStandardCrawler.js';
+// import { ThaipbsCrawler } from './crawlers/ThaipbsCrawler.js';
 
-async function main () {
-    // const link = ['https://thestandard.co/category/wealth/wealth-economic/']
-    const link = ['https://www.thaipbs.or.th/news/categories/economy/archive']
-    // const crawler = new TheStandardCrawler(link);
-    const crawler = new ThaipbsCrawler(link)
-    await crawler.run()
-}
 
-main()
+
+// async function main () {
+//     // const link = ['https://thestandard.co/category/wealth/wealth-economic/']
+//     const link = ['https://www.thaipbs.or.th/news/categories/economy/archive']
+//     // const crawler = new TheStandardCrawler(link);
+//     const crawler = new ThaipbsCrawler(link)
+//     await crawler.run()
+// }
+
+// main()
 
 
 
@@ -108,4 +110,35 @@ main()
 
 
 
-console.log('Crawling finished!');
+import '@dotenvx/dotenvx/config'
+import { TheStandardBasicCrawler } from './crawlers/TheStandardBasicCrawler.js';
+import { TheStandardCrawler } from './crawlers/TheStandardCrawler.js';
+import { KeyValueStore } from 'crawlee';
+import crypto from 'crypto';
+import * as cheerio from 'cheerio';
+import { htmlObject } from './types/htmlObject.js';
+import { ThaipbsBasicCrawler } from './crawlers/ThaipbsBasicCrawler.js';
+
+
+// console.log(`${process.env.CACHE_STORE_NAME}`)
+
+// console.log('Crawling finished!');
+
+ async function  main(){
+    const link = ['https://thestandard.co/category/wealth/wealth-economic/']
+    const link2 = ['https://www.thaipbs.or.th/news/categories/economy/archive']
+    const crawler = new TheStandardBasicCrawler(link, process.env.HTML_CACHE_STORE_NAME as string)
+    const crawler2 = new ThaipbsBasicCrawler(link2, process.env.HTML_CACHE_STORE_NAME as string)
+    // await crawler.run()
+    await crawler2.run()
+
+    // const url = 'https://thestandard.co/ai-bubble-warning-signs/'
+    // const store = await KeyValueStore.open(process.env.HTML_CACHE_STORE_NAME)
+    // const hash = crypto.createHash('sha256').update(url).digest('hex')
+    // const value = await store.getValue(hash) as htmlObject
+    // const $ = cheerio.load(value.html)
+    // console.log($('.entry-content p').text())
+
+}
+
+await main()

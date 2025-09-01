@@ -1,40 +1,35 @@
 import { BaseCheerioCrawler } from './BaseCheerioCrawler.js';
 import { CheerioCrawler, Dataset, log } from 'crawlee';
-import * as cheerio from 'cheerio';
 
 
 export class TheStandardCrawler extends BaseCheerioCrawler {
-    constructor(startUrls: string[], cacheStoreName: string) {
+    constructor(startUrls: string[]) {
         // Call the parent constructor with the start URLs and an optional maxRequests limit.
-        super(startUrls, 'The Standard', cacheStoreName);
+        super(startUrls, 'The Standard');
     }
 
     override createCrawler() {
         const crawler = new CheerioCrawler(({
             maxRequestsPerCrawl: 7,
             respectRobotsTxtFile: true,
-            preNavigationHooks: [
-                async (crawlingContext, gotoOptions) => {
-                    const htmlContent = await super.handleHTML(crawlingContext.request.url)
-                    try{
-                        if(htmlContent){
-                            crawlingContext.body = htmlContent
-                            // Mark the request as already handled
-                            crawlingContext.request.skipNavigation = true;
-                        }
-                    }
-                    catch(error: any){
-                        log.error(error.message)
-                    }
-                }
-            ],
-            async requestHandler({ request, $, enqueueLinks, body }) {
+            async requestHandler({ request, $, enqueueLinks }) {
                 log.info(`Processing ${request.url}`);
 
-                if(request.skipNavigation == true){
-                    console.log("Skip downloading html")
-                    // This part runs only on the article detail pages
-                    $ = cheerio.load(body)
+                // Find all article links on the current page
+                // The articles are located within <a> tags inside <h3> tags
+                await enqueueLinks({
+                    selector: 'h3.news-title a',
+                    label: 'DETAIL'
+                });
+
+                // Handle the pagination by finding the 'Next' button or page links
+                // The pagination links have a specific class. This will find the next page button
+                await enqueueLinks({
+                    selector: 'div.wp-pagenavi a.nextpostslink',
+                    label: 'LIST' // Label for the next list page
+                });
+
+                // This part runs only on the article detail pages
                 if (request.label === 'DETAIL') {
                     const title = $('div.entry-title > h1.title').text().trim();
                     const author = $('div.meta-author > a').map((i, el) => $(el).text()).get().join(',')
@@ -68,22 +63,6 @@ export class TheStandardCrawler extends BaseCheerioCrawler {
 
                     log.info(`Scraped article: ${title}`);
                 }
-                }
-
-                // Find all article links on the current page
-                // The articles are located within <a> tags inside <h3> tags
-                await enqueueLinks({
-                    selector: 'h3.news-title a',
-                    label: 'DETAIL'
-                });
-
-                // Handle the pagination by finding the 'Next' button or page links
-                // The pagination links have a specific class. This will find the next page button
-                await enqueueLinks({
-                    selector: 'div.wp-pagenavi a.nextpostslink',
-                    label: 'LIST' // Label for the next list page
-                });
-
             }
         }))
 
