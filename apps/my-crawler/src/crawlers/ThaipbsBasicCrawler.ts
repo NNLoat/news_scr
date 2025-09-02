@@ -19,7 +19,10 @@ export class ThaipbsBasicCrawler extends BaseCrawler{
     override createCrawler(): BasicCrawler {
         const self = this
         const crawler = new BasicCrawler({
-            maxRequestsPerCrawl: 10,
+            maxRequestsPerMinute: 30,
+            respectRobotsTxtFile: false,
+            retryOnBlocked: true,
+            sameDomainDelaySecs: 5,
             maxConcurrency: 10,
             async requestHandler({request, sendRequest, crawler}){
                 log.info(`Processing ${request.url}`);

@@ -16,18 +16,14 @@ export class TheStandardBasicCrawler extends BaseCrawler {
 
         const self = this
         const crawler = new BasicCrawler({
-            maxRequestsPerCrawl: 4,
             respectRobotsTxtFile: true,
-            maxConcurrency:10,
+            retryOnBlocked: true,
+            sameDomainDelaySecs: 5,
+            maxConcurrency: 10,
+            maxRequestsPerMinute: 30,
             async requestHandler({ request, sendRequest, crawler }) {
                 log.info(`Processing ${request.url}`);
                 // STEP 1: Download the page content first
-                // const { body } = await sendRequest({
-                //     url: request.url,
-                //     method: request.method as any,
-                //     body: request.payload,
-                //     headers: request.headers,
-                // })
                 let $: cheerio.CheerioAPI
                 // Process archive page
                 if (request.url.includes('/category/')) {
