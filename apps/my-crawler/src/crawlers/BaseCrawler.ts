@@ -50,6 +50,7 @@ export abstract class BaseCrawler{
             // console.log(typeof htmlContent)
             try{
                 if(htmlContent){
+                    // htmlContent = htmlContent.replace("\\", '\\')
                     this.htmlStore.setValue(hash, {
                         html: htmlContent as string,
                         url: url as string
@@ -58,6 +59,7 @@ export abstract class BaseCrawler{
             }
             catch (error: any){
                 log.error(error.message)
+
             }
         } else {
             log.info('Skipping download. using cached html')
@@ -69,6 +71,7 @@ export abstract class BaseCrawler{
     };
 
     private async init(){
+        console.log('open key-value store')
         this.htmlStore = await KeyValueStore.open(this.cacheStoreName)
     }
 
@@ -81,6 +84,7 @@ export abstract class BaseCrawler{
      */
     public async run(){
         await this.init();
+        console.log('finished init')
         this.crawler = this.createCrawler();
         await this.crawler.run(this.startUrls)
     }
