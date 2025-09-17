@@ -5,8 +5,8 @@ import * as cheerio from 'cheerio';
 
 
 export class TheStandardBasicCrawler extends BaseCrawler {
-    constructor(startUrls: string[], cache_store_name: string) {
-        super("The Standard", cache_store_name, startUrls)
+    constructor(startUrls: string[], cache_store_name: string, force_recrawl_flag: boolean) {
+        super("The Standard", cache_store_name, startUrls, force_recrawl_flag)
 
     }
     protected override async  handleHTML(url: string): Promise<string | Buffer<ArrayBufferLike>> {
@@ -39,7 +39,6 @@ export class TheStandardBasicCrawler extends BaseCrawler {
                     // TODO: need to check if it is a valid link
                     if (nav) {
                         // add nav request with unique key so that it can be recrawled
-
                         await crawler.addRequests([
                             new Request({
                                 url: nav,

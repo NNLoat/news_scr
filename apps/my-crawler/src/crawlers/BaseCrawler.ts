@@ -1,4 +1,4 @@
-import { BasicCrawler, KeyValueStore, log } from 'crawlee';
+import { BasicCrawler, KeyValueStore, log, Request } from 'crawlee';
 import crypto from 'crypto';
 import { htmlObject } from '../types/htmlObject.js';
 
@@ -7,16 +7,21 @@ export abstract class BaseCrawler{
     crawler: BasicCrawler
     source: string
     cacheStoreName: string
-    startUrls: string[]
+    startUrls: any
     htmlStore!: KeyValueStore;
+    force_recrawl_flag: boolean;
+    requestInput: Request[]
 
     constructor(source: string,
         cache_store_name: string,
-        startUrls: string[],) {
+        startUrls: string[],
+        force_recrawl_flag: boolean ) {
         this.crawler = null!;
+        this.requestInput = null!;
         this.source = source
         this.cacheStoreName = cache_store_name
         this.startUrls = startUrls
+        this.force_recrawl_flag = force_recrawl_flag;
     }
 
     protected async downloadHtml(url: string) {
@@ -45,6 +50,20 @@ export abstract class BaseCrawler{
             modifiedContent = modifiedContent.replace(x, "")
         })
         return modifiedContent
+    }
+
+    /**
+     * This method to force crawler to recrawl the url by adjusting the unique key of the request
+     */
+    protected process_request(): Request[] {
+        let output: Request[] = this.startUrls.map(function (x: string) {
+            return new Request({
+                url: x,
+                uniqueKey: `the-standard-archive-page-${Date.now()}`
+            })
+        })
+        return output;
+
     }
 
     /**
@@ -84,6 +103,13 @@ export abstract class BaseCrawler{
     };
 
     private async init(){
+        console.log(`recrawl flag: ${this.force_recrawl_flag}`)
+        if (this.force_recrawl_flag == true){
+            this.requestInput = this.process_request();
+        }
+        else{
+            this.requestInput = this.startUrls
+        }
         console.log('open key-value store')
         this.htmlStore = await KeyValueStore.open(this.cacheStoreName)
     }
@@ -99,7 +125,7 @@ export abstract class BaseCrawler{
         await this.init();
         console.log('finished init')
         this.crawler = this.createCrawler();
-        await this.crawler.run(this.startUrls)
+        await this.crawler.run(this.requestInput)
     }
 
 }

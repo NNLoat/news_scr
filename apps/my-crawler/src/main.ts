@@ -113,7 +113,7 @@
 import '@dotenvx/dotenvx/config'
 import { TheStandardBasicCrawler } from './crawlers/TheStandardBasicCrawler.js';
 import { TheStandardCrawler } from './crawlers/TheStandardCrawler.js';
-import { KeyValueStore } from 'crawlee';
+import { KeyValueStore, Request } from 'crawlee';
 import crypto from 'crypto';
 import * as cheerio from 'cheerio';
 import { htmlObject } from './types/htmlObject.js';
@@ -126,8 +126,12 @@ import { ThaipbsBasicCrawler } from './crawlers/ThaipbsBasicCrawler.js';
 
  async function  main(){
     const link = ['https://thestandard.co/category/wealth/wealth-economic/']
+    // const TheStandardBaseRequest = new Request({
+    //     url: 'https://thestandard.co/category/wealth/wealth-economic/',
+    //     uniqueKey: 'the-standard-archive-page-${Date.now()}'
+    // })
     const link2 = ['https://www.thaipbs.or.th/news/categories/economy/archive']
-    const crawler = new TheStandardBasicCrawler(link, process.env.HTML_CACHE_STORE_NAME as string)
+    const crawler = new TheStandardBasicCrawler(link, process.env.HTML_CACHE_STORE_NAME as string, true)
     // const crawler2 = new ThaipbsBasicCrawler(link2, process.env.HTML_CACHE_STORE_NAME as string)
     await crawler.run()
     // await crawler2.run()
