@@ -41,7 +41,7 @@ export class TheStandardBasicCrawler extends BaseCrawler {
                         await crawler.addRequests([nav])
                     }
                     let article_link: string[] = []
-                    $('div.newsbox-archive > div.news-item > div.row > div > div > h3.news-title > a').each((ind, ele) =>{
+                    $('div.newsbox-archive > div.news-item > div.row > div > div > h3.news-title > a').each((_ind, ele) =>{
                         article_link.push(ele.attribs.href)
                     })
                     // console.log(`${article_link?.length} ${article_link}`)
@@ -53,7 +53,7 @@ export class TheStandardBasicCrawler extends BaseCrawler {
                     const body = await self.handleHTML(request.url);
                     $ = cheerio.load(body)
                     const title = $('div.entry-title > h1.title').text().trim();
-                    const author = $('div.meta-author > a').map((i, el) => $(el).text()).get().join(',')
+                    const author = $('div.meta-author > a').map((_i, el) => $(el).text()).get().join(',')
                     const dateTmp = $('div.meta-date > span').text().trim().split('.')
                     let date
                     try {
