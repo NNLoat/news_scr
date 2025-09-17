@@ -18,9 +18,10 @@ export class TheStandardBasicCrawler extends BaseCrawler {
         const crawler = new BasicCrawler({
             respectRobotsTxtFile: true,
             retryOnBlocked: true,
-            sameDomainDelaySecs: 5,
+            sameDomainDelaySecs: 2,
             maxConcurrency: 10,
-            maxRequestsPerMinute: 30,
+            maxRequestsPerMinute: 100,
+            // maxRequestsPerCrawl: 10,
             async requestHandler({ request, sendRequest, crawler }) {
                 log.info(`Processing ${request.url}`);
                 // STEP 1: Download the page content first

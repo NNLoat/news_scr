@@ -47,7 +47,7 @@ export abstract class BaseCrawler{
         if (storedValue == null){
             //Download html file from page
             htmlContent = await this.downloadHtml(url)
-            console.log(typeof htmlContent)
+            // console.log(typeof htmlContent)
             try{
                 if(htmlContent){
                     this.htmlStore.setValue(hash, {

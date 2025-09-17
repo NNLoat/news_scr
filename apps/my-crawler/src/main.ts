@@ -129,8 +129,8 @@ import { ThaipbsBasicCrawler } from './crawlers/ThaipbsBasicCrawler.js';
     const link2 = ['https://www.thaipbs.or.th/news/categories/economy/archive']
     const crawler = new TheStandardBasicCrawler(link, process.env.HTML_CACHE_STORE_NAME as string)
     const crawler2 = new ThaipbsBasicCrawler(link2, process.env.HTML_CACHE_STORE_NAME as string)
-    // await crawler.run()
-    await crawler2.run()
+    await crawler.run()
+    // await crawler2.run()
 
     // const url = 'https://thestandard.co/ai-bubble-warning-signs/'
     // const store = await KeyValueStore.open(process.env.HTML_CACHE_STORE_NAME)

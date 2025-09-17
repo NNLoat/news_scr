@@ -19,11 +19,12 @@ export class ThaipbsBasicCrawler extends BaseCrawler{
     override createCrawler(): BasicCrawler {
         const self = this
         const crawler = new BasicCrawler({
-            maxRequestsPerMinute: 30,
+            maxRequestsPerMinute: 120,
             respectRobotsTxtFile: false,
             retryOnBlocked: true,
             sameDomainDelaySecs: 5,
             maxConcurrency: 10,
+            maxRequestsPerCrawl: 3,
             async requestHandler({request, sendRequest, crawler}){
                 log.info(`Processing ${request.url}`);
                 let $: cheerio.CheerioAPI
