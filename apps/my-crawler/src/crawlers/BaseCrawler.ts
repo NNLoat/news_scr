@@ -33,6 +33,19 @@ export abstract class BaseCrawler{
             return null;
         }
     }
+    /**
+     * This method is for clean up html content (like removing unicode) before save it for cache
+     */
+
+    protected cleanUpHtmlContent(htmlContent: string): string{
+        // remove those unusual line separator, zero-width space char, etc.
+        const to_be_remove_token = [/\u2028/g, /\u200B/g]
+        let modifiedContent = htmlContent
+        to_be_remove_token.forEach((x) =>{
+            modifiedContent = modifiedContent.replace(x, "")
+        })
+        return modifiedContent
+    }
 
     /**
      * This method for handle html page downloading and caching
@@ -50,7 +63,7 @@ export abstract class BaseCrawler{
             // console.log(typeof htmlContent)
             try{
                 if(htmlContent){
-                    // htmlContent = htmlContent.replace("\\", '\\')
+                    htmlContent = this.cleanUpHtmlContent(htmlContent)
                     this.htmlStore.setValue(hash, {
                         html: htmlContent as string,
                         url: url as string

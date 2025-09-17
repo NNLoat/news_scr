@@ -1,4 +1,4 @@
-import { BasicCrawler, log, Dataset } from "crawlee";
+import { BasicCrawler, log, Dataset, Request } from "crawlee";
 import { BaseCrawler } from "./BaseCrawler.js";
 import * as cheerio from 'cheerio';
 
@@ -38,7 +38,14 @@ export class TheStandardBasicCrawler extends BaseCrawler {
                     const nav = $('div.wp-pagenavi > a.nextpostslink').attr('href')
                     // TODO: need to check if it is a valid link
                     if (nav) {
-                        await crawler.addRequests([nav])
+                        // add nav request with unique key so that it can be recrawled
+
+                        await crawler.addRequests([
+                            new Request({
+                                url: nav,
+                                uniqueKey: `the-standard-archive-page-${Date.now()}`
+                            })
+                        ])
                     }
                     let article_link: string[] = []
                     $('div.newsbox-archive > div.news-item > div.row > div > div > h3.news-title > a').each((_ind, ele) =>{
